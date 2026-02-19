@@ -9,7 +9,7 @@ A compact binary file patch generator and rebuilder. Given two versions of a bin
 
 ## How It Works
 
-### Patch Generation (`main.py` + `zipper.py`)
+### Patch Generation (`zipper.py`)
 
 The generator splits **file2** (the new version) into fixed-size blocks (`patch_size`, default 64 bytes, must be a positive multiple of 8). For each block it tries—in order of preference—the most compact encoding:
 
