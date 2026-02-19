@@ -41,10 +41,9 @@ The generator builds a hash map from every `patch_size`-byte slice of file1 to i
 
 ### Patch Application (`builder.py`)
 
-The builder reads the patch (`.bin` or `.txt`), validates CRC-32, and replays each record against the reference file to reconstruct the target:
+The builder reads the patch (`.bin`), validates CRC-32, and replays each record against the reference file to reconstruct the target:
 
 - **`.bin`** — raw patch bytes + 4-byte trailing CRC-32.
-- **`.txt`** — hex-encoded data lines followed by a single CRC-32 line; line-by-line integrity checking.
 
 ---
 
@@ -52,10 +51,10 @@ The builder reads the patch (`.bin` or `.txt`), validates CRC-32, and replays ea
 
 ```
 zipper/
-├── main.py        # CLI entry point — generates a patch from two binary files
-├── zipper.py      # Core patch generation: block lookup, RLE encoder/decoder, record emitter
-├── builder.py     # Patch application: .bin/.txt decoding, CRC validation, file reconstruction
+├── zipper.py      # Patch generation: block lookup, RLE encoder/decoder, record emitter + CLI
+├── builder.py     # Patch application: .bin decoding, CRC validation, file reconstruction + CLI
 ├── encoder.py     # Serialises the patch stream to .bin with a CRC-32 trailer
+├── main.py        # Alternative CLI entry point (same as zipper.py)
 ├── __init__.py
 └── requirements.txt
 ```
@@ -77,7 +76,7 @@ pip install -r requirements.txt
 ### Generate a patch
 
 ```bash
-python -m zipper.main <old_file.bin> <new_file.bin>
+python zipper.py <old_file.bin> <new_file.bin>
 ```
 
 You will be prompted for the block size (default: 64 bytes). The tool produces:
@@ -85,12 +84,11 @@ You will be prompted for the block size (default: 64 bytes). The tool produces:
 | Output file | Description |
 |---|---|
 | `<old_file>_patch.bin` | Compact binary patch with CRC-32 trailer |
-| `<old_file>_patch.txt` | Hex-encoded text version with CRC-32 footer line |
 
 **Example:**
 
 ```
-$ python -m zipper.main firmware_v1.bin firmware_v2.bin
+$ python zipper.py firmware_v1.bin firmware_v2.bin
 File 1 : firmware_v1.bin  (131,072 bytes)
 File 2 : firmware_v2.bin  (131,072 bytes)
 
@@ -106,19 +104,19 @@ Done.
 ### Apply a patch
 
 ```bash
-python -m zipper.builder <reference.bin> <patch.bin|patch.txt> [output.bin]
+python builder.py <reference.bin> <patch.bin> [output.bin]
 ```
 
 | Argument | Required | Description |
 |---|---|---|
-| `reference.bin` | Yes | The *old* file (same as `<file1>` passed to `main.py`) |
-| `patch.bin` / `patch.txt` | Yes | The patch produced by `main.py` (either format is accepted) |
+| `reference.bin` | Yes | The *old* file (same as `<file1>` passed to `zipper.py`) |
+| `patch.bin` | Yes | The patch produced by `zipper.py` |
 | `output.bin` | No | Output path — defaults to `rebuilt.bin` |
 
 **Example:**
 
 ```
-$ python -m zipper.builder firmware_v1.bin firmware_v1_patch.bin firmware_v2_rebuilt.bin
+$ python builder.py firmware_v1.bin firmware_v1_patch.bin firmware_v2_rebuilt.bin
 Reference : firmware_v1.bin  (131,072 bytes)
 Patch     : firmware_v1_patch.bin
 Output    : firmware_v2_rebuilt.bin
@@ -148,4 +146,4 @@ The default of **64 bytes** works well for most firmware or binary assets. Must 
 ## Limitations
 
 - Maximum addressable offset for `COPY_OFFSET` records: **16 MB** (`0xFFFFFF`). Files larger than ~16 MB may fall back to `RAW` or `XOR_RLE` records for blocks beyond that range.
-- The `.txt` format does not support streaming; the entire patch is loaded into memory for CRC validation.
+- The patch file is loaded entirely into memory for CRC validation before reconstruction begins.

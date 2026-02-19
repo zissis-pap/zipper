@@ -1,6 +1,6 @@
 """
-encoder2.py – Encode the binary patch stream into .bin or .txt files
-               with a single whole-file CRC-32.
+encoder.py – Encode the binary patch stream into a .bin file
+             with a single whole-file CRC-32.
 
   .bin layout:
     [raw patch bytes][4-byte CRC-32 BE of the target file (file2)]

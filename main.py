@@ -3,12 +3,11 @@ main.py – Binary file patch generator (with XOR-delta + RLE compression)
 
 Usage
 -----
-  python -m zipper.main <file1.bin> <file2.bin>
+  python main.py <file1.bin> <file2.bin>
 
 The script compares file1.bin against file2.bin in patch_size-byte blocks
 and produces:
-  <stem>_patch.bin  – compact binary patch stream
-  <stem>_patch.txt  – same data chunked into CRC-verified hex lines
+  <stem>_patch.bin  – compact binary patch stream with CRC-32 trailer
 
 See zipper.py and encoder.py for format details.
 """
@@ -17,8 +16,8 @@ import math
 import os
 import sys
 
-from .encoder import encode_to_bin
-from .zipper import generate_patch
+from encoder import encode_to_bin
+from zipper import generate_patch
 
 
 # ── Interactive prompts ────────────────────────────────────────────────────────
@@ -45,7 +44,7 @@ def _ask_patch_size() -> int:
 
 def main() -> None:
     if len(sys.argv) != 3:
-        sys.exit("Usage: python -m zipper.main <file1.bin> <file2.bin>")
+        sys.exit("Usage: python main.py <file1.bin> <file2.bin>")
 
     path1, path2 = sys.argv[1], sys.argv[2]
 
@@ -68,21 +67,17 @@ def main() -> None:
 
     patch = generate_patch(data2, data1, patch_size)
 
-    # Derive output paths from file1's stem
+    # Derive output path from file1's stem
     stem    = os.path.splitext(path1)[0]
     bin_out = stem + "_patch.bin"
-    txt_out = stem + "_patch.txt"
 
     encode_to_bin(patch, bin_out, data2)
 
-    bin_size   = os.path.getsize(bin_out)
-    ratio      = (1 - bin_size / len(data2)) * 100
+    bin_size = os.path.getsize(bin_out)
+    ratio    = (1 - bin_size / len(data2)) * 100
 
     print(f"\nDone.")
     print(f"  Patch binary : {bin_out}  ({bin_size:,} bytes)")
-    print(
-        f"  Patch text   : {txt_out}  "
-    )
     print(
         f"  Compression  : {bin_size:,} B patch vs {len(data2):,} B {path2}"
         f"  →  {ratio:.1f}%"
