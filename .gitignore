@@ -34,7 +34,6 @@ htmlcov/
 
 # Generated patch outputs
 *_patch.bin
-*_patch.txt
 rebuilt.bin
 
 # IDEs

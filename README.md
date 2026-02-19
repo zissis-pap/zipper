@@ -3,8 +3,6 @@
 A compact binary file patch generator and rebuilder. Given two versions of a binary file, **zipper** produces a minimal patch using block comparison, offset relocation, XOR-delta, and RLE compression. The patch can later be applied against the original file to exactly reconstruct the newer version.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![PyQt5](https://img.shields.io/badge/PyQt5-5.15%2B-41CD52?logo=qt&logoColor=white)](https://pypi.org/project/PyQt5/)
-[![pyserial](https://img.shields.io/badge/pyserial-3.5%2B-lightgrey?logo=pypi&logoColor=white)](https://pypi.org/project/pyserial/)
 [![zlib](https://img.shields.io/badge/zlib-stdlib-informational)](https://docs.python.org/3/library/zlib.html)
 
 ---
@@ -147,3 +145,9 @@ The default of **64 bytes** works well for most firmware or binary assets. Must 
 
 - Maximum addressable offset for `COPY_OFFSET` records: **16 MB** (`0xFFFFFF`). Files larger than ~16 MB may fall back to `RAW` or `XOR_RLE` records for blocks beyond that range.
 - The patch file is loaded entirely into memory for CRC validation before reconstruction begins.
+
+---
+
+## Author
+
+**Zissis Papadopoulos**
