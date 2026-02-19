@@ -49,23 +49,14 @@ The builder reads the patch (`.bin`), validates CRC-32, and replays each record 
 
 ```
 zipper/
-├── zipper.py      # Patch generation: block lookup, RLE encoder/decoder, record emitter + CLI
-├── builder.py     # Patch application: .bin decoding, CRC validation, file reconstruction + CLI
-├── encoder.py     # Serialises the patch stream to .bin with a CRC-32 trailer
-├── main.py        # Alternative CLI entry point (same as zipper.py)
-├── __init__.py
-└── requirements.txt
+├── zipper.py    # Patch generation: block lookup, RLE encoder/decoder, record emitter + CLI
+├── builder.py   # Patch application: .bin decoding, CRC validation, file reconstruction + CLI
+└── encoder.py   # Serialises the patch stream to .bin with a CRC-32 trailer
 ```
 
 ---
 
-## Installation
-
-```bash
-pip install -r requirements.txt
-```
-
-> **Python 3.10 or later** is required (uses built-in generic types such as `tuple[bytes, int]`).
+> **Python 3.10 or later** is required (uses only the standard library — no dependencies to install).
 
 ---
 
