@@ -1,4 +1,4 @@
-# zipper
+# ZiPPer - what it says: Zissis Papadopoulos PatchER
 
 A compact binary file patch generator and rebuilder. Given two versions of a binary file, **zipper** produces a minimal patch using block comparison, offset relocation, XOR-delta, and RLE compression. The patch can later be applied against the original file to exactly reconstruct the newer version.
 
